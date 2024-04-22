@@ -32,6 +32,6 @@ const tagSchema=new Schema<Itag>({
     }
 })
 
-const tagModel= model<Itag>('Tag',tagSchema)
+const Tag= model<Itag>('Tag',tagSchema)
 
-export default tagModel
+export default Tag
