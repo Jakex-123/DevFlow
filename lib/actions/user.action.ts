@@ -21,6 +21,7 @@ export async function createUser(userData:CreateUserParams) {
     try{
         connectDB();
         const newUser=await User.create(userData)
+        return newUser
     }
     catch(error){
         console.log(error)
@@ -31,6 +32,7 @@ export async function createUser(userData:CreateUserParams) {
 export async function updateUser(userData:UpdateUserParams) {
     try{
         connectDB();
+        // eslint-disable-next-line no-unused-vars
         const {clerkId,updateData,path}=userData
         await User.findOneAndUpdate({clerkId},updateData,{new:true})
     }
@@ -48,8 +50,7 @@ export async function deleteUser(userid:DeleteUserParams) {
         if(!user){
             throw new Error('User not found')
         }
-        //Delete all user data
-        const userQuestionsids=await Question.find({author:user._id}).distinct('_id')
+        // Delete all user data
         await Question.deleteMany({author:user._id})
         // delete answers
         const deletedUser=await User.findByIdAndDelete(user._id)
