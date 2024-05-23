@@ -8,28 +8,6 @@ import { HomePageFilters } from "@/constants/filters";
 import {getQuestions} from "@/lib/actions/question.action";
 import Link from "next/link";
 
-// const questions=[{_id:'1', 
-//     title:'Cascading deletes in sqlalchemy?',
-//     tags:[{_id:'1',name:'python'},],
-//     author:{
-//         _id: '2',
-//         name: "Doc Brown",
-//         avatar: "https://example.com/docbrown.png"
-//       },
-//       upvotes:10,views:100,
-//       answers:[],
-//       createdAt:new Date('2023-11-17T03:24:00')},{_id:'1', 
-//       title:'Cascading deletes in sqlalchemy?',
-//       tags:[{_id:'1',name:'python'},],
-//       author:{
-//           _id: '2',
-//           name: "Doc Brown",
-//           avatar: "https://example.com/docbrown.png"
-//         },
-//         upvotes:10,views:1000,
-//         answers:[],
-//         createdAt:new Date('2023-12-17T03:24:00')}]
-
 export default async function Home() {
 
     const results= await getQuestions({})
