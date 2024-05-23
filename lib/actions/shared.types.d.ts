@@ -63,7 +63,7 @@ export interface CreateQuestionParams {
   content: string;
   tags: string[];
   author: Schema.Types.ObjectId | IUser;
-  path: any;
+  path: string;
 }
 
 export interface GetQuestionByIdParams {

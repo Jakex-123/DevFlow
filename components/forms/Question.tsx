@@ -20,7 +20,7 @@ import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
-import { useRouter } from "next/navigation";
+import { useRouter,usePathname } from "next/navigation";
 
 interface Props{
   mongoUserId:string
@@ -32,6 +32,7 @@ const Question = ({mongoUserId}:Props) => {
   const editorRef = useRef(null);
   const [isSubmitting,setIsSubmitting]=useState(false);
   const router=useRouter()
+  const pathName=usePathname()
 
   const form = useForm<z.infer<typeof QuestionSchema>>({
     resolver: zodResolver(QuestionSchema),
@@ -53,7 +54,7 @@ const Question = ({mongoUserId}:Props) => {
         content: values.explaination,
         tags:values.tags,
         author:JSON.parse(mongoUserId),
-        path:"",
+        path:pathName,
       })
 
       router.push('/')
