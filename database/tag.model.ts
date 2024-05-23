@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose'
+import  {Schema, model, models} from 'mongoose'
 
 export interface Itag extends Document{
     name:string,
@@ -32,6 +32,7 @@ const tagSchema=new Schema<Itag>({
     }
 })
 
-const Tag= model<Itag>('Tag',tagSchema)
+const Tag= models.Tag || model<Itag>('Tag',tagSchema) 
+
 
 export default Tag

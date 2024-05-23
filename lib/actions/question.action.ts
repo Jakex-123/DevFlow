@@ -3,8 +3,23 @@
 import Question from "@/database/question.model";
 import { connectDB } from "../mongoose"
 import Tag from "@/database/tag.model";
+import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
+import User from "@/database/user.model";
+import { revalidatePath } from "next/cache";
 
-export async function createQuestion({params}:any){
+export async function getQuestions(params:GetQuestionsParams) {
+    try{
+        connectDB();
+        const questions=await Question.find({}).populate({path:'author',model:User}).populate({path:'tags', model:Tag})
+        return {questions}
+    }
+    catch(err){
+        console.log(err)
+        throw(err)
+    }
+}
+
+export async function createQuestion(params:CreateQuestionParams){
     try{
         connectDB();
         // eslint-disable-next-line no-unused-vars
@@ -27,9 +42,10 @@ export async function createQuestion({params}:any){
         await Question.findByIdAndUpdate(question._id,{
             $push:{tags:{$each:tagDocuments}}
         })
-
+        revalidatePath(path)
     }
     catch(err){
-
+        console.log(err)
+        throw(err)
     }
 }

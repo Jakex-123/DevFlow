@@ -1,4 +1,5 @@
-import {Schema,model} from 'mongoose'
+
+import {Schema,model, models} from 'mongoose'
 
 export interface IUser extends Document{
     clerkId: string,
@@ -30,6 +31,7 @@ const userSchema = new Schema<IUser>({
     joinedOn: { type: Date, default:Date.now },
   });
 
- const User= model<IUser>('User',userSchema)
+
+ const User= models.User || model<IUser>('User',userSchema)
 
  export default User;
