@@ -20,12 +20,18 @@ import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
+import { useRouter } from "next/navigation";
+
+interface Props{
+  mongoUserId:string
+}
 
 const type:any='create';
 
-const Question = () => {
+const Question = ({mongoUserId}:Props) => {
   const editorRef = useRef(null);
   const [isSubmitting,setIsSubmitting]=useState(false);
+  const router=useRouter()
 
   const form = useForm<z.infer<typeof QuestionSchema>>({
     resolver: zodResolver(QuestionSchema),
@@ -42,7 +48,16 @@ const Question = () => {
     // ✅ This will be type-safe and validated.
     setIsSubmitting(true)
     try{
-      await createQuestion({})
+      await createQuestion({
+        title:values.title,
+        content: values.explaination,
+        tags:values.tags,
+        author:JSON.parse(mongoUserId),
+        path:"",
+      })
+
+      router.push('/')
+
     }
     catch(error){
 
@@ -170,7 +185,7 @@ const Question = () => {
                 {field.value.length>0 && (
                   <div className="flex-start mt-2.5 gap-1">
                     {field.value.map((tag:any)=>{
-                     return <Badge onClick={()=>{handleTagDelete(tag,field)}} className="subtle-medium background-light800_dark300 text-light-400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize" key={tag}>{tag} <Image src='/assets/icons/close.svg' alt="Close Icon" width={12} height={12} className="cursor-pointer object-contain invert-0 dark:invert" /> </Badge>
+                     return <Badge onClick={()=>{handleTagDelete(tag,field)}} className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize" key={tag}>{tag} <Image src='/assets/icons/close.svg' alt="Close Icon" width={12} height={12} className="cursor-pointer object-contain invert-0 dark:invert" /> </Badge>
                     })}
                   </div>
                 )}
