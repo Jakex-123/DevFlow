@@ -7,6 +7,7 @@ import Tag from "@/database/tag.model";
 export async function createQuestion({params}:any){
     try{
         connectDB();
+        // eslint-disable-next-line no-unused-vars
         const {title, content,tags,author,path}=params;
 
         const question=await Question.create({
@@ -16,9 +17,9 @@ export async function createQuestion({params}:any){
         const tagDocuments=[]
         for (const tag of tags){
             const existingTag=await Tag.findOneAndUpdate(
-                {name:{ $regex: new RegExp(`^${tag}$`,"i")}},//find i=case-insensitive
-                {$setOnInsert:{name:tag}, $push:{ question:question._id}},//do something on it
-                {upsert: true,new:true}//attributes
+                {name:{ $regex: new RegExp(`^${tag}$`,"i")}},// find i=case-insensitive
+                {$setOnInsert:{name:tag}, $push:{ question:question._id}},// do something on it
+                {upsert: true,new:true}// attributes
             )
             tagDocuments.push(existingTag._id)
         }
