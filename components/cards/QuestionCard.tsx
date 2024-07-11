@@ -44,7 +44,7 @@ const QuestionCard = ({_id,title,tags,author,upvotes,views,answers,createdAt}:Qu
                 })}
             </div>
             <div className='mt-6 flex w-full flex-wrap justify-between'>
-            <Metric imgUrl='/assets/icons/avatar.svg' title={` - asked ${getTimeStamp(createdAt)}`} alt='user' href={`/profile/${author._id}`} value={author.name} isAuthor textStyles='small-medium text-dark400_light700'/>
+                <Metric imgUrl='/assets/icons/avatar.svg' title={` - asked ${getTimeStamp(createdAt)}`} alt='user' href={`/profile/${author._id}`} value={author.name} isAuthor textStyles='small-medium text-dark400_light700'/>
                 <Metric imgUrl='/assets/icons/like.svg' title='Votes' alt='upvote' value={formatNumber(upvotes.length)} textStyles='small-medium text-dark400_light800'/>
                 <Metric imgUrl='/assets/icons/message.svg' title='Answers' alt='answers' value={formatNumber(answers.length)} textStyles='small-medium text-dark400_light800'/>
                 <Metric imgUrl='/assets/icons/eye.svg' title='Views' alt='views' value={formatNumber(views)} textStyles='small-medium text-dark400_light800'/>
