@@ -1,7 +1,7 @@
 "use server"
 import User from '@/database/user.model';
 import { connectDB } from '../mongoose';
-import { CreateUserParams, DeleteUserParams, GetAllUsersParams, UpdateUserParams } from './shared.types';
+import { CreateUserParams, DeleteUserParams, GetAllUsersParams, GetUserByIdParams, UpdateUserParams } from './shared.types';
 import Question from '@/database/question.model';
 
 export async function getAllUsers(params:GetAllUsersParams) {
@@ -18,7 +18,7 @@ export async function getAllUsers(params:GetAllUsersParams) {
     }
 }
 
-export async function getUserById(params:any) {
+export async function getUserById(params:GetUserByIdParams) {
     try{
         connectDB()
         const {userId}=params;

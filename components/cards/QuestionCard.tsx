@@ -22,7 +22,7 @@ interface QuestionProps {
     upvotes: string;
     views: number;
     answers: Array<object>;
-    createdAt: Date;
+    createdAt: any;
   }
 
 const QuestionCard = ({_id,title,tags,author,upvotes,views,answers,createdAt}:QuestionProps) => {
