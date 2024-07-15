@@ -17,7 +17,7 @@ const Page = async ({ params }:Props) => {
   const { id } = params;
   const result = await getQuestionById({ questionId: id });
   console.log(result)
-  const { author, tags,answers } = result;
+  const { author, tags } = result;
   return (
     <div>
       <div>
