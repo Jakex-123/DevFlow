@@ -7,7 +7,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Page = async ({ params }: { id: string }) => {
+interface Props{
+  params:{
+  id: string
+  }
+}
+
+const Page = async ({ params }:Props) => {
   const { id } = params;
   const result = await getQuestionById({ questionId: id });
   console.log(result)
