@@ -21,6 +21,7 @@ import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
 import { useRouter,usePathname } from "next/navigation";
+import { useTheme } from "@/context/ThemeProvider";
 
 interface Props{
   mongoUserId:string
@@ -29,6 +30,7 @@ interface Props{
 const type:any='create';
 
 const Question = ({mongoUserId}:Props) => {
+  const {mode}=useTheme()
   const editorRef = useRef(null);
   const [isSubmitting,setIsSubmitting]=useState(false);
   const router=useRouter()
@@ -149,6 +151,8 @@ const Question = ({mongoUserId}:Props) => {
                     height: 350,
                     menubar: false,
                     plugins: ['advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks', 'codesample', 'fullscreen','insertdatetime', 'media', 'table'],
+                    skin:mode==='dark'?'oxide-dark':'oxide',
+                    content_css:mode==='dark'?'dark':'light',
                     toolbar:
                       "undo redo | " +
                       "codesample bold italic forecolor | alignleft aligncenter | " +

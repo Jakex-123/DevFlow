@@ -1,11 +1,15 @@
 import Metric from "@/components/shared/Metric";
 import ParseHTML from "@/components/shared/ParseHTML";
 import RenderTag from "@/components/shared/RenderTag";
+import Answer from "@/components/forms/Answer";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { auth } from "@clerk/nextjs";
+import { getUserById } from "@/lib/actions/user.action";
+import AllAnswers from "@/components/shared/AllAnswers";
 
 interface Props{
   params:{
@@ -17,6 +21,11 @@ const Page = async ({ params }:Props) => {
   const { id } = params;
   const result = await getQuestionById({ questionId: id });
   console.log(result)
+  const {userId:clerkId}=auth()
+  let mongoUser;
+  if(clerkId){
+    mongoUser=await getUserById({userId:clerkId})
+  }
   const { author, tags } = result;
   return (
     <div>
@@ -67,6 +76,8 @@ const Page = async ({ params }:Props) => {
             return <RenderTag key={tag._id} _id={tag._id} name={tag.name} showCount={false}/>
         })}
       </div>
+      <AllAnswers questionId={result._id.toString()} userId={JSON.stringify(mongoUser)} totalAnswers={result.answers.length}/>
+      <Answer authorId={JSON.stringify(mongoUser)} questionId={JSON.stringify(result._id)} question={result.content} />
     </div>
   );
 };
