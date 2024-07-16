@@ -10,6 +10,7 @@ import React from "react";
 import { auth } from "@clerk/nextjs";
 import { getUserById } from "@/lib/actions/user.action";
 import AllAnswers from "@/components/shared/AllAnswers";
+import Votes from "@/components/shared/Votes";
 
 interface Props{
   params:{
@@ -20,7 +21,6 @@ interface Props{
 const Page = async ({ params }:Props) => {
   const { id } = params;
   const result = await getQuestionById({ questionId: id });
-  console.log(result)
   const {userId:clerkId}=auth()
   let mongoUser;
   if(clerkId){
@@ -29,11 +29,12 @@ const Page = async ({ params }:Props) => {
   const { author, tags } = result;
   return (
     <div>
-      <div>
+      <div className="flex justify-between">
       <Link
         href={`/profile/${author.clerkId}`}
         className="flex items-center gap-1 "
       >
+      
         <Image
           src={`${author.picture}`}
           width={30}
@@ -45,6 +46,8 @@ const Page = async ({ params }:Props) => {
           {author.name}
         </p>
       </Link>
+      <Votes type="question" itemId={result._id.toString()} userId={author._id.toString()} upvotes={result.upvotes.length} 
+      downvotes={result.downvotes.length} hasdownVoted={result.downvotes.includes(mongoUser._id)} hasupVoted={result.upvotes.includes(mongoUser._id)} hasSaved={mongoUser?.saved?.includes(result._id)}/>
       </div>
       <h2 className="h2-bold text-dark300_light700 mt-3.5 w-full text-left">{result.title}</h2>
       <div className="mb-8 mt-5 flex flex-wrap gap-4">
@@ -76,7 +79,7 @@ const Page = async ({ params }:Props) => {
             return <RenderTag key={tag._id} _id={tag._id} name={tag.name} showCount={false}/>
         })}
       </div>
-      <AllAnswers questionId={result._id.toString()} userId={JSON.stringify(mongoUser)} totalAnswers={result.answers.length}/>
+      <AllAnswers questionId={result._id.toString()} userId={mongoUser._id} totalAnswers={result.answers.length}/>
       <Answer authorId={JSON.stringify(mongoUser)} questionId={JSON.stringify(result._id)} question={result.content} />
     </div>
   );

@@ -1,9 +1,100 @@
-import React from 'react'
+"use client"
+import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
+import { downvoteQuestion, upvoteQuestion } from "@/lib/actions/question.action";
+import { formatNumber } from "@/lib/utils";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import React from "react";
 
-const Votes = () => {
-  return (
-    <div>Votes</div>
-  )
+interface Props{
+    upvotes:number,
+    downvotes:number,
+    type:string,
+    itemId:string,
+    userId:string,
+    hasupVoted:boolean,
+    hasdownVoted:boolean,
+    hasSaved?:boolean
 }
 
-export default Votes
+
+
+const Votes = ({upvotes,downvotes,itemId,type,userId,hasupVoted,hasdownVoted,hasSaved}:Props) => {
+    const pathname=usePathname()
+    console.log(hasupVoted)
+    const handleVote=async (action:string)=>{
+        if(action==="upvote" && type==="question"){
+            await upvoteQuestion({
+                questionId:itemId,
+                userId,
+                hasdownVoted,
+                hasupVoted,
+                path:pathname
+            })
+        }
+        else if(action==="downvote" && type==="question"){
+            await downvoteQuestion({
+                questionId:itemId,
+                userId,
+                hasdownVoted,
+                hasupVoted,
+                path:pathname
+            })
+        }
+        else if(action==="upvote" && type==="answer"){
+            await upvoteAnswer({
+                answerId:itemId,
+                userId,
+                hasdownVoted,
+                hasupVoted,
+                path:pathname
+            })
+        }
+        else if(action==="downvote" && type==="answer"){
+            await downvoteAnswer({
+                answerId:itemId,
+                userId,
+                hasdownVoted,
+                hasupVoted,
+                path:pathname
+            })
+        }
+    }
+    
+    const handleSave=()=>{
+    
+    }
+  return (
+    <div className="flex gap-5">
+      <div className="flex items-center gap-2">
+        <div className="flex-center gap-1">
+          <Image
+            src={hasupVoted?"/assets/icons/upvoted.svg":"/assets/icons/upvote.svg"}
+            alt="upvote"
+            height={18}
+            width={18}
+            onClick={()=>handleVote('upvote')}
+          />
+          <div className="background-light700_dark400 min-w-[18px] rounded-sm p-1 text-center">
+            <p className="subtle-medium text-dark400_light900">{formatNumber(upvotes)}</p>
+          </div>
+        </div>
+        <div className="flex-center gap-1">
+          <Image
+            src={hasdownVoted?"/assets/icons/downvoted.svg":"/assets/icons/downvote.svg"}
+            alt="downvote"
+            height={18}
+            width={18}
+            onClick={()=>handleVote('downvote')}
+          />
+          <div className="background-light700_dark400 min-w-[18px] rounded-sm p-1 text-center">
+            <p className="subtle-medium text-dark400_light900">{formatNumber(downvotes)}</p>
+          </div>
+        </div>
+      </div>
+      {type==="question" && <Image onClick={()=>handleSave()} src={hasSaved?'/assets/icons/star-filled.svg':'/assets/icons/star-red.svg'} width={18} height={18} alt="favourite"/>}
+    </div>
+  );
+};
+
+export default Votes;
