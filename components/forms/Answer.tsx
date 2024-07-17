@@ -20,15 +20,15 @@ import { usePathname } from "next/navigation";
 
 type AnswerFormInputs = z.infer<typeof AnswerSchema>;
 
-interface Props{
-    question:string,
-    questionId:string,
-    authorId:string
+interface Props {
+  question: string;
+  questionId: string;
+  authorId: string;
 }
 
-const Answer = (params:Props) => {
-    const pathName=usePathname()
-    const {questionId,authorId}=params
+const Answer = (params: Props) => {
+  const pathName = usePathname();
+  const { questionId, authorId } = params;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { mode } = useTheme();
   const editorRef = useRef<any>(null);
@@ -40,36 +40,46 @@ const Answer = (params:Props) => {
   });
 
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-        await createAnswer({
-            content:values.answer,
-            author:JSON.parse(authorId),
-            question:JSON.parse(questionId),
-            path:pathName,
-        })
-        form.reset()
-        if(editorRef.current){
-            const editor=editorRef.current as any
-            editor.setContent('')
-        }
+      await createAnswer({
+        content: values.answer,
+        author: JSON.parse(authorId),
+        question: JSON.parse(questionId),
+        path: pathName,
+      });
+      form.reset();
+      if (editorRef.current) {
+        const editor = editorRef.current as any;
+        editor.setContent("");
+      }
     } catch (error) {
-        console.log(error)
-
-    }
-    finally{
-        setIsSubmitting(false)
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div>
-        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
-            <h4 className="paragraph-semibold text-dark400_light800">Write your answer here</h4>
-            <Button onClick={()=>{}} className="btn light-border-2 gap-2 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500">
-                <Image src={'/assets/icons/stars.svg'} width={15} height={15} alt='stars' className="object-contain"/>
-                Generate AI answer</Button>
-        </div>
+      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+        <h4 className="paragraph-semibold text-dark400_light800">
+          Write your answer here
+        </h4>
+        <Button
+          onClick={() => {}}
+          className="btn light-border-2 gap-2 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
+        >
+          <Image
+            src={"/assets/icons/stars.svg"}
+            width={15}
+            height={15}
+            alt="stars"
+            className="object-contain"
+          />
+          Generate AI answer
+        </Button>
+      </div>
       <Form {...form}>
         <form
           className="mt-6 flex w-full flex-col gap-10"
