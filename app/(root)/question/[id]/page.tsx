@@ -46,17 +46,17 @@ const Page = async ({ params }: Props) => {
         </Link>
         <Votes
           type="question"
-          itemId={result._id.toString()}
-          userId={author._id.toString()}
-          upvotes={result.upvotes.length}
-          downvotes={result.downvotes.length}
-          hasdownVoted={result.downvotes.includes(mongoUser._id)}
-          hasupVoted={result.upvotes.includes(mongoUser._id)}
-          hasSaved={mongoUser.saved.includes(result._id)}
+          itemId={result?._id.toString()}
+          userId={author?._id.toString()}
+          upvotes={result?.upvotes?.length}
+          downvotes={result?.downvotes?.length}
+          hasdownVoted={result?.downvotes?.includes(mongoUser._id)}
+          hasupVoted={result?.upvotes?.includes(mongoUser._id)}
+          hasSaved={mongoUser?.saved?.includes(result._id)}
         />
       </div>
       <h2 className="h2-bold text-dark300_light700 mt-3.5 w-full text-left">
-        {result.title}
+        {result?.title}
       </h2>
       <div className="mb-8 mt-5 flex flex-wrap gap-4">
         <Metric
@@ -69,40 +69,40 @@ const Page = async ({ params }: Props) => {
         <Metric
           imgUrl="/assets/icons/message.svg"
           alt="message"
-          value={formatNumber(result.answers.length)}
+          value={formatNumber(result?.answers?.length)}
           title=" Answers"
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
           imgUrl="/assets/icons/eye.svg"
           alt="eye"
-          value={formatNumber(result.views)}
+          value={formatNumber(result?.views)}
           title=" Views"
           textStyles="small-medium text-dark400_light800"
         />
       </div>
-      <ParseHTML data={result.content} />
+      <ParseHTML data={result?.content} />
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map((tag: any) => {
           return (
             <RenderTag
-              key={tag._id}
-              _id={tag._id}
-              name={tag.name}
+              key={tag?._id}
+              _id={tag?._id}
+              name={tag?.name}
               showCount={false}
             />
           );
         })}
       </div>
       <AllAnswers
-        questionId={result._id.toString()}
-        userId={mongoUser._id}
-        totalAnswers={result.answers.length}
+        questionId={result?._id.toString()}
+        userId={mongoUser?._id}
+        totalAnswers={result?.answers?.length}
       />
       <Answer
         authorId={JSON.stringify(mongoUser)}
-        questionId={JSON.stringify(result._id)}
-        question={result.content}
+        questionId={JSON.stringify(result?._id)}
+        question={result?.content}
       />
     </div>
   );
