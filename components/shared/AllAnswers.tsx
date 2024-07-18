@@ -33,7 +33,7 @@ const AllAnswers = async ({
       <div>
         {result?.map((answer) => {
           return (
-            <article key={answer._id} className="light-border border-b py-10">
+            <article key={answer?._id} className="light-border border-b py-10">
               <div className="flex items-center justify-between">
                 <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
                   <Link
@@ -53,7 +53,7 @@ const AllAnswers = async ({
                       </p>
                       <p className="small-regular text-light400_light500 mt-0.5 line-clamp-1">
                         <span className="mx-1 max-sm:hidden">•</span>
-                        answered {getTimeStamp(answer.createdAt)}
+                        answered {getTimeStamp(answer?.createdAt)}
                       </p>
                     </div>
                   </Link>
@@ -64,13 +64,13 @@ const AllAnswers = async ({
                     upvotes={answer?.upvotes?.length}
                     type="answer"
                     itemId={answer?._id?.toString()}
-                    userId={userId.toString()}
+                    userId={userId?.toString()}
                     hasdownVoted={answer?.downvotes?.includes(userId)}
                     hasupVoted={answer?.upvotes?.includes(userId)}
                   />
                 </div>
               </div>
-              <ParseHTML data={answer.content} />
+              <ParseHTML data={answer?.content} />
             </article>
           );
         })}
