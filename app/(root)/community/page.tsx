@@ -8,7 +8,6 @@ import React from 'react'
 
 const Page =async () => {
   const res=await getAllUsers({})
-  console.log(res.users)
   return <div className='mx-auto w-full max-w-5xl'>
   <div>
     <h1 className='h1-bold text-dark100_light900'>All Users</h1>

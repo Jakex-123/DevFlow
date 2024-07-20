@@ -1,5 +1,6 @@
 "use client";
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 import {
   downvoteQuestion,
   upvoteQuestion,
@@ -7,8 +8,8 @@ import {
 import { saveQuestion } from "@/lib/actions/user.action";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import React from "react";
+import { usePathname,useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 interface Props {
   upvotes: number;
@@ -31,7 +32,14 @@ const Votes = ({
   hasdownVoted,
   hasSaved,
 }: Props) => {
+
+  const router=useRouter()
   const pathname = usePathname();
+
+  useEffect(()=>{
+    viewQuestion({questionId:itemId?.toString(),userId:userId?userId?.toString():undefined})
+  },[itemId,pathname,userId,router])
+
   const handleVote = async (action: string) => {
     if (action === "upvote" && type === "question") {
       await upvoteQuestion({

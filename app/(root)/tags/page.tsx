@@ -7,7 +7,6 @@ import React from 'react'
 
 const page = async () => {
   const results=await getAllTags({})
-  console.log(results.tags)
   return (
     <div className='mx-auto w-full max-w-5xl'>
         <h1 className='h1-bold text-dark100_light900'>Tags</h1>

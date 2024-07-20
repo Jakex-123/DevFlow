@@ -46,7 +46,7 @@ export async function createQuestion(params:CreateQuestionParams){
         for (const tag of tags){
             const existingTag=await Tag.findOneAndUpdate(
                 {name:{ $regex: new RegExp(`^${tag}$`,"i")}},// find i=case-insensitive
-                {$setOnInsert:{name:tag}, $push:{ question:question._id}},// do something on it
+                {$setOnInsert:{name:tag}, $push:{ questions:question._id}},// do something on it
                 {upsert: true,new:true}// attributes
             )
             tagDocuments.push(existingTag._id)
@@ -72,7 +72,7 @@ export async function upvoteQuestion(params:QuestionVoteParams) {
             updateQuery={$pull:{upvotes:userId}}
         }
         else if(hasdownVoted){
-            updateQuery={$pull:{downvotes:userId},$push:{upvotes:userId}}
+            updateQuery={$pull:{downvotes:userId},$addToSet:{upvotes:userId}}
         }
         else{
             updateQuery={$addToSet:{upvotes:userId}}
@@ -99,7 +99,7 @@ export async function downvoteQuestion(params:QuestionVoteParams) {
             updateQuery={$pull:{downvotes:userId}}
         }
         else if(hasupVoted){
-            updateQuery={$pull:{upvotes:userId},$push:{downvotes:userId}}
+            updateQuery={$pull:{upvotes:userId},$addToSet:{downvotes:userId}}
         }
         else{
             updateQuery={$addToSet:{downvotes:userId}}
