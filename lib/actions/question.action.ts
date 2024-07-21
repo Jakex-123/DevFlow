@@ -3,9 +3,11 @@
 import Question from "@/database/question.model";
 import { connectDB } from "../mongoose"
 import Tag from "@/database/tag.model";
-import { CreateQuestionParams, GetQuestionByIdParams, GetQuestionsParams, QuestionVoteParams } from "./shared.types";
+import { CreateQuestionParams, DeleteQuestionParams, EditQuestionParams, GetQuestionByIdParams, GetQuestionsParams, QuestionVoteParams } from "./shared.types";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
+import Answer from "@/database/answer.model";
+import Interaction from "@/database/interaction.model";
 
 export async function getQuestions(params:GetQuestionsParams) {
     try{
@@ -117,3 +119,26 @@ export async function downvoteQuestion(params:QuestionVoteParams) {
     }
 }
 
+export async function deleteQuestion(params:DeleteQuestionParams){
+    try{
+        connectDB()
+        const {questionId,path}=params
+        await Question.findByIdAndDelete(questionId)
+        await Answer.deleteMany({question:questionId})
+        await Interaction.deleteMany({question:questionId})
+        await Tag.updateMany({questions:questionId},{$pull:{questions:questionId}})
+        revalidatePath(path)
+    }
+    catch(error){
+        console.log(error)
+        throw error
+    }
+}
+
+export async function editQuestion(params:EditQuestionParams){
+    const {content, path, questionId, title}=params
+    const question = await Question.findById(questionId)
+    if(!question) throw new Error("Question not found")
+    await Question.findByIdAndUpdate(questionId,{title,content})
+    revalidatePath(path)
+}

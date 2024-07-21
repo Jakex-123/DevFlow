@@ -11,20 +11,17 @@ import { auth } from "@clerk/nextjs";
 import { getUserById } from "@/lib/actions/user.action";
 import AllAnswers from "@/components/shared/AllAnswers";
 import Votes from "@/components/shared/Votes";
+import { URLProps } from "@/types";
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
-
-const Page = async ({ params }: Props) => {
+const Page = async ({ params }: URLProps) => {
   const { id } = params;
   const result = await getQuestionById({ questionId: id });
   const { userId: clerkId } = auth();
   let mongoUser;
   if (clerkId) {
-    mongoUser = await getUserById({ userId: clerkId });  }
+    mongoUser = await getUserById({ userId: clerkId });  
+  }
+  console.log(result)
   const { author, tags } = result;
   return (
     <div>

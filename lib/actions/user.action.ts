@@ -183,3 +183,16 @@ export async function getUserAnswers(params:GetUserStatsParams) {
         throw error
     }
 }
+
+export async function updateUserInfo(params:UpdateUserParams) {
+    try{
+        connectDB()
+        const {clerkId,path,updateData}=params
+        await User.findOneAndUpdate({clerkId},updateData,{new:true})
+        revalidatePath(path)
+    }
+    catch(error){
+        console.log(error)
+        throw error
+    }
+}

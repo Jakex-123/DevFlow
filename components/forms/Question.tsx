@@ -19,29 +19,34 @@ import React, { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-import { createQuestion } from "@/lib/actions/question.action";
-import { useRouter,usePathname } from "next/navigation";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
+import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeProvider";
 
-interface Props{
-  mongoUserId:string
+interface Props {
+  mongoUserId: string;
+  type?: string;
+  questionDetails?: string;
 }
 
-const type:any='create';
+// const type:any='create';
 
-const Question = ({mongoUserId}:Props) => {
-  const {mode}=useTheme()
+const Question = ({ mongoUserId, type, questionDetails }: Props) => {
+  const { mode } = useTheme();
   const editorRef = useRef(null);
-  const [isSubmitting,setIsSubmitting]=useState(false);
-  const router=useRouter()
-  const pathName=usePathname()
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const pathName = usePathname();
+
+  const parsedQuestionData = questionDetails  && JSON.parse(questionDetails || "");
+  const groupedTags = parsedQuestionData?.tags.map((tag: any) => tag.name);
 
   const form = useForm<z.infer<typeof QuestionSchema>>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: {
-      title: "",
-      explaination: "",
-      tags: [],
+      title: parsedQuestionData?.title || "",
+      explaination: parsedQuestionData?.content || "",
+      tags: groupedTags || [],
     },
   });
 
@@ -49,54 +54,63 @@ const Question = ({mongoUserId}:Props) => {
   async function onSubmit(values: z.infer<typeof QuestionSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    setIsSubmitting(true)
-    try{
-      await createQuestion({
-        title:values.title,
-        content: values.explaination,
-        tags:values.tags,
-        author:JSON.parse(mongoUserId),
-        path:pathName,
-      })
-
-      router.push('/')
-
-    }
-    catch(error){
-
-    }
-    finally{
-      setIsSubmitting(false)
+    setIsSubmitting(true);
+    try {
+      if (type === "edit") {
+        await editQuestion({
+          questionId: parsedQuestionData._id,
+          title: values.title,
+          content: values.explaination,
+          path: pathName,
+        });
+        router.push(`/question/${parsedQuestionData._id}`);
+      } else {
+        await createQuestion({
+          title: values.title,
+          content: values.explaination,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathName,
+        });
+        router.push("/");
+      }
+      
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
-  const handleInputDown=(e:React.KeyboardEvent<HTMLInputElement>,field:any)=>{
-    if(e.key==='Enter' && field.name==='tags'){
+  const handleInputDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    field: any
+  ) => {
+    if (e.key === "Enter" && field.name === "tags") {
       e.preventDefault();
-      const tagInput=e.target as HTMLInputElement;
-      const tagValue=tagInput.value.trim();
-      if(tagValue!==""){
-        if(tagValue.length>15){
-          return form.setError('tags',{
-            type:"required",
-            message:"Tag must be less than 15 characters."
-          })
+      const tagInput = e.target as HTMLInputElement;
+      const tagValue = tagInput.value.trim();
+      if (tagValue !== "") {
+        if (tagValue.length > 15) {
+          return form.setError("tags", {
+            type: "required",
+            message: "Tag must be less than 15 characters.",
+          });
         }
-        if(!field.value.includes(tagValue as never)){
-          form.setValue('tags',[...field.value,tagValue]);
-          tagInput.value=""
-          form.clearErrors('tags')
+        if (!field.value.includes(tagValue as never)) {
+          form.setValue("tags", [...field.value, tagValue]);
+          tagInput.value = "";
+          form.clearErrors("tags");
         }
-      } else{
-        form.trigger()
+      } else {
+        form.trigger();
       }
     }
-  }
+  };
 
-  const handleTagDelete=(tag:string,field:any)=>{
-    const newTags= field.value.filter((t:string)=>t!==tag);
-    form.setValue('tags',newTags);
-  }
+  const handleTagDelete = (tag: string, field: any) => {
+    const newTags = field.value.filter((t: string) => t !== tag);
+    form.setValue("tags", newTags);
+  };
 
   return (
     <Form {...form}>
@@ -142,17 +156,33 @@ const Question = ({mongoUserId}:Props) => {
                   apiKey={`${process.env.NEXT_PUBLIC_TINY_API_KEY}`}
                   onInit={(evt, editor) => {
                     // @ts-ignore
-                    editorRef.current = editor
+                    editorRef.current = editor;
                   }}
                   onBlur={field.onBlur}
-                  onEditorChange={(content)=>field.onChange(content)}
-                  initialValue=""
+                  onEditorChange={(content) => field.onChange(content)}
+                  initialValue={parsedQuestionData?.content || ""}
                   init={{
                     height: 350,
                     menubar: false,
-                    plugins: ['advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks', 'codesample', 'fullscreen','insertdatetime', 'media', 'table'],
-                    skin:mode==='dark'?'oxide-dark':'oxide',
-                    content_css:mode==='dark'?'dark':'light',
+                    plugins: [
+                      "advlist",
+                      "autolink",
+                      "lists",
+                      "link",
+                      "image",
+                      "charmap",
+                      "preview",
+                      "anchor",
+                      "searchreplace",
+                      "visualblocks",
+                      "codesample",
+                      "fullscreen",
+                      "insertdatetime",
+                      "media",
+                      "table",
+                    ],
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                     toolbar:
                       "undo redo | " +
                       "codesample bold italic forecolor | alignleft aligncenter | " +
@@ -166,7 +196,7 @@ const Question = ({mongoUserId}:Props) => {
                 Introduce the problem and expand on what you put in the title.
                 Minimum 20 characters.
               </FormDescription>
-              <FormMessage className="text-red-600"/>
+              <FormMessage className="text-red-600" />
             </FormItem>
           )}
         />
@@ -182,18 +212,35 @@ const Question = ({mongoUserId}:Props) => {
               </FormLabel>
               <FormControl className="mt-3.5">
                 <>
-                <Input
-                  className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                  placeholder="Add tags..."
-                  onKeyDown={(e)=>handleInputDown(e,field)}
-                />
-                {field.value.length>0 && (
-                  <div className="flex-start mt-2.5 gap-1">
-                    {field.value.map((tag:any)=>{
-                     return <Badge onClick={()=>{handleTagDelete(tag,field)}} className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize" key={tag}>{tag} <Image src='/assets/icons/close.svg' alt="Close Icon" width={12} height={12} className="cursor-pointer object-contain invert-0 dark:invert" /> </Badge>
-                    })}
-                  </div>
-                )}
+                  <Input disabled={type==="edit"}
+                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                    placeholder="Add tags..."
+                    onKeyDown={(e) => handleInputDown(e, field)}
+                  />
+                  {field.value.length > 0 && (
+                    <div className="flex-start mt-2.5 gap-1">
+                      {field.value.map((tag: any) => {
+                        return (
+                          <Badge
+                            onClick={() => {
+                              type==="create" && handleTagDelete(tag, field);
+                            }}
+                            className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
+                            key={tag}
+                          >
+                            {tag}
+                            {type==="create" && <Image
+                              src="/assets/icons/close.svg"
+                              alt="Close Icon"
+                              width={12}
+                              height={12}
+                              className="cursor-pointer object-contain invert-0 dark:invert"
+                            />}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  )}
                 </>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
@@ -205,15 +252,17 @@ const Question = ({mongoUserId}:Props) => {
           )}
         />
 
-        <Button type="submit" className="primary-gradient w-fit !text-light-900" disabled={isSubmitting}>{isSubmitting?(
-          <>
-          {type==='edit'?'Editing...':'Posting...'}
-          </>
-        ):
-        <>
-        {type==='edit'?'Edit Question':'Ask Question'}
-        </>
-        }</Button>
+        <Button
+          type="submit"
+          className="primary-gradient w-fit !text-light-900"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+          ) : (
+            <>{type === "edit" ? "Edit Question" : "Ask Question"}</>
+          )}
+        </Button>
       </form>
     </Form>
   );

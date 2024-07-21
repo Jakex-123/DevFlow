@@ -45,7 +45,7 @@ const AllAnswers = async ({
                       src={answer?.author?.picture}
                       width={18}
                       height={18}
-                      className="object-cover max-sm:mt-0.5 aspect-square rounded-full"
+                      className="aspect-square rounded-full object-cover max-sm:mt-0.5"
                     />
                     <div className="flex flex-col sm:flex-row sm:items-center">
                       <p className="body-semibold text-dark300_light700">

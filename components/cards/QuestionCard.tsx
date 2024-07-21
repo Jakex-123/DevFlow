@@ -3,11 +3,13 @@ import RenderTag from '../shared/RenderTag'
 import Link from 'next/link';
 import Metric from '../shared/Metric';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
+import EditDeleteAction from '../shared/EditDeleteAction';
 
 // const arr=['Javascript','react.js','Invalid Fields','Salesforce'];
 
 
 interface QuestionProps {
+    clerkId?:string,
     _id: string;
     title: string;
     tags: {
@@ -26,7 +28,8 @@ interface QuestionProps {
     createdAt: any;
   }
 
-const QuestionCard = ({_id,title,tags,author,upvotes,views,answers,createdAt}:QuestionProps) => {
+const QuestionCard = ({clerkId,_id,title,tags,author,upvotes,views,answers,createdAt}:QuestionProps) => {
+  const showActionButtons=clerkId && clerkId===author.clerkId
   return (
     <div className='card-wrapper rounded-[10px] p-9 sm:px-11'>
         <div className='flex flex-col-reverse items-start justify-between gap-5 sm:flex-row'>
@@ -38,6 +41,7 @@ const QuestionCard = ({_id,title,tags,author,upvotes,views,answers,createdAt}:Qu
                   </h3>
                 </Link>
             </div>
+            {showActionButtons && <EditDeleteAction type="question" id={_id.toString()} />}
         </div>
             <div className='mt-3.5 flex flex-wrap gap-2'>
                 {tags.map((tag)=>{

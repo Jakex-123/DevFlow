@@ -17,7 +17,7 @@ const ProfileLink = ({imgUrl,href,title}:ProfileProps) => {
         height={20}
         alt="joined on"
       />
-      {href?<Link href={href} className="paragraph-medium text-accent-blue">{title}</Link>:
+      {href?<Link href={href} target="_blank" className="paragraph-medium text-accent-blue">{title}</Link>:
       <p className="paragraph-medium text-dark400_light700">
         {title}
       </p>}
