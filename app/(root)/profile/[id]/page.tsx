@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { getUserInfo } from "@/lib/actions/user.action";
 import { URLProps } from "@/types";
-import { SignedIn } from "@clerk/nextjs";
+import { auth, SignedIn } from "@clerk/nextjs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +14,7 @@ import AnswersTab from "@/components/shared/AnswersTab";
 const Page = async ({ params }: URLProps) => {
     const { id: clerkId } = params;
     const result = await getUserInfo({ userId: clerkId });
+    const { userId } = auth();
 
     return (
         <>
@@ -46,7 +47,7 @@ const Page = async ({ params }: URLProps) => {
                 </div>
                 <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
                     <SignedIn>
-                        {clerkId === result?.user?.clerkId && (
+                        {userId === result?.user?.clerkId && (
                             <Link href={`/profile/edit`}>
                                 <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
                                     Edit Profile
