@@ -24,7 +24,7 @@ const searchParams=useSearchParams()
 const pathname=usePathname()
 
 
-const query=searchParams.get('test')
+const query=searchParams.get('q')
 const [search,setSearch]=useState(query || '')
 
 
@@ -51,7 +51,7 @@ useEffect(()=>{
         router.push(newUrl,{scroll:false})
       }
     }
-  },300)
+  },500)
   return ()=>{
     clearTimeout(debounce)
   }

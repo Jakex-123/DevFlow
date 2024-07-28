@@ -5,21 +5,21 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import {  QuestionFilters } from "@/constants/filters";
 import { getSavedQuestions } from "@/lib/actions/user.action";
+import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs";
 
-export default async function Home() {
-
-    
+export default async function Home({searchParams}:SearchParamsProps) {
     const {userId}=auth()
     if(!userId) return null
     const results= await getSavedQuestions({
-        clerkId:userId
+        clerkId:userId,
+        searchQuery:searchParams.q
     })
     return(
         <>
             <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
             <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-                <LocalSearch route='/' iconPosition="left" imgSrc='/assets/icons/search.svg' placeholder="Search for Questions" otherClasses="flex-1" />
+                <LocalSearch route='/collection' iconPosition="left" imgSrc='/assets/icons/search.svg' placeholder="Search for Questions" otherClasses="flex-1" />
                 <Filter filters={QuestionFilters}
                 otherClasses="min-h-[56px] sm:min-w-[170px]"
                 containerClasses="hidden max-md:flex"

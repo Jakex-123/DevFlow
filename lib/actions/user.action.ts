@@ -12,7 +12,14 @@ export async function getAllUsers(params:GetAllUsersParams) {
         connectDB();
         // eslint-disable-next-line no-unused-vars
         const {page=1, pageSize=10, filter,searchQuery}=params
-        const users=await User.find({}).sort({createdAt:-1})
+        const query:FilterQuery<typeof User>={};
+        if(searchQuery){
+            query.$or=[
+                {name:{$regex:new RegExp(searchQuery,'i')}},
+                {username:{$regex:new RegExp(searchQuery,'i')}}
+            ]
+        }
+        const users=await User.find(query).sort({createdAt:-1})
         return {users};
     }
     catch(error){
@@ -107,9 +114,10 @@ export async function saveQuestion(params:ToggleSaveQuestionParams){
 
 export async function getSavedQuestions(params:GetSavedQuestionsParams){
     const {clerkId,searchQuery}=params // ,page,pageSize,filter,searchQuery
-    const query:FilterQuery<typeof Question> = searchQuery
-    ? { title: { $regex: new RegExp(searchQuery, 'i') } }
-    : { };
+    const query:FilterQuery<typeof Question> = { }
+    if(searchQuery){
+        query.$or=[{title: { $regex: new RegExp(searchQuery, 'i') }}]
+    }
     const user = await User.findOne({clerkId}).populate({
         path:"saved",
         match: query,

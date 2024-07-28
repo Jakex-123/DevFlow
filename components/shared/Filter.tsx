@@ -6,8 +6,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+// import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import React from "react";
+// import React, { useState } from "react";
 
 interface Props {
   filters: {
@@ -19,6 +20,15 @@ interface Props {
 }
 
 const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
+
+//   const router=useRouter()
+// const searchParams=useSearchParams()
+// const pathname=usePathname()
+
+//   const query=searchParams.get("filter")
+//   const [filter,setFilter]=useState(query || '')
+
+
   return (
     <div className={`relative ${containerClasses}`}>
       <Select>
