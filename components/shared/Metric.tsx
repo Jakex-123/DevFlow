@@ -18,7 +18,7 @@ const Metric = ({imgUrl,title,value,textStyles,href,isAuthor,alt}:Props) => {
 
     const metricContent=(
         <>
-        <Image className={`object-contain ${href?'rounded-full':''}`} src={imgUrl} height={16} width={16} alt={alt}/>
+        <Image className={`object-cover aspect-square ${href?'rounded-full':''}`} src={imgUrl} height={16} width={16} alt={alt}/>
         <p className={`${textStyles} flex items-center gap-1`}>
             {value}
             <span className={`small-regular line-clamp-1 ${isAuthor?'max-sm:hidden':''}`}>

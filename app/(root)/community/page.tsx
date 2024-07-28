@@ -3,12 +3,14 @@ import Filter from '@/components/shared/Filter'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { UserFilters } from '@/constants/filters'
 import { getAllUsers } from '@/lib/actions/user.action'
+import { SearchParamsProps } from '@/types'
 import React from 'react'
 
 
-const Page =async () => {
-  const res=await getAllUsers({})
-  console.log(res.users)
+const Page =async ({searchParams}:SearchParamsProps) => {
+  const res=await getAllUsers({
+    searchQuery: searchParams.q,
+  })
   return <div className='mx-auto w-full max-w-5xl'>
   <div>
     <h1 className='h1-bold text-dark100_light900'>All Users</h1>

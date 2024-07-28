@@ -3,11 +3,13 @@ import Filter from '@/components/shared/Filter'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { TagFilters } from '@/constants/filters'
 import { getAllTags } from '@/lib/actions/tag.action'
+import { SearchParamsProps } from '@/types'
 import React from 'react'
 
-const page = async () => {
-  const results=await getAllTags({})
-  console.log(results.tags)
+const page = async ({searchParams}:SearchParamsProps) => {
+  const results=await getAllTags({
+    searchQuery:searchParams.q
+  })
   return (
     <div className='mx-auto w-full max-w-5xl'>
         <h1 className='h1-bold text-dark100_light900'>Tags</h1>

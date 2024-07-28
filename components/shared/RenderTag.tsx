@@ -16,7 +16,7 @@ const RenderTag = ({_id,name,totalQuestions,showCount}:Props) => {
             {name}
         </Badge>
         {showCount&&
-        <p className='small-medium text-dark500_light700'>{totalQuestions}+</p>}
+        <p className='small-medium text-dark500_light700'>{totalQuestions}</p>}
     </Link>
   )
 }
