@@ -11,7 +11,7 @@ import Stats from "@/components/shared/Stats";
 import QuestionsTab from "@/components/shared/QuestionsTab";
 import AnswersTab from "@/components/shared/AnswersTab";
 
-const Page = async ({ params }: URLProps) => {
+const Page = async ({ params,searchParams }: URLProps) => {
     const { id: clerkId } = params;
     const result = await getUserInfo({ userId: clerkId });
     const { userId } = auth();
@@ -71,10 +71,10 @@ const Page = async ({ params }: URLProps) => {
                         </TabsTrigger>
                     </TabsList>
                     <TabsContent value="top-posts">
-                    <QuestionsTab userId={result?.user._id} clerkId={clerkId} />
+                    <QuestionsTab searchParams={searchParams} userId={result?.user._id} clerkId={clerkId} />
                     </TabsContent>
                     <TabsContent value="answers">
-                        <AnswersTab userId={result?.user._id} clerkId={clerkId}/>
+                        <AnswersTab searchParams={searchParams} userId={result?.user._id} clerkId={clerkId}/>
                     </TabsContent>
                 </Tabs>
             </div>

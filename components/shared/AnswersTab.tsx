@@ -1,22 +1,26 @@
 import { getUserAnswers } from '@/lib/actions/user.action'
 import React from 'react'
 import AnswerCard from '../cards/AnswerCard'
+import Pagination from './Pagination'
 
 interface Props{
     userId:string,
-    clerkId:string
+    clerkId:string,
+    searchParams:any
 }
 
-const AnswersTab = async ({userId,clerkId}:Props) => {
-    const {totalAnswers,answers}=await getUserAnswers({userId})
-    console.log(totalAnswers,answers)
-    console.log(answers)
+const AnswersTab = async ({userId,clerkId,searchParams}:Props) => {
+    const {answers,isNext}=await getUserAnswers({userId,page:searchParams?.page ? +searchParams.page:1})
+    
   return (
-    <div>
+    <>
         {answers.map((answer)=>(
             <AnswerCard clerkId={clerkId} question={answer?.question} _id={answer._id} key={answer._id} author={answer.author} createdAt={answer.createdAt} upvotes={answer.upvotes} />
         ))}
-    </div>
+        <div className="mt-10">
+        <Pagination pageNumber={searchParams?.page ? +searchParams.page:1} isNext={isNext}/>
+        </div>
+    </>
   )
 }
 

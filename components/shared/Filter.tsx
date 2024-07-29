@@ -1,3 +1,4 @@
+"use client"
 import {
   Select,
   SelectContent,
@@ -6,9 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { formURLQuery } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
 
-// import React, { useState } from "react";
 
 interface Props {
   filters: {
@@ -21,18 +22,23 @@ interface Props {
 
 const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
 
-//   const router=useRouter()
-// const searchParams=useSearchParams()
-// const pathname=usePathname()
+const router=useRouter()
+const searchParams=useSearchParams()
+const paramFilter = searchParams.get('filter');
 
-//   const query=searchParams.get("filter")
-//   const [filter,setFilter]=useState(query || '')
-
+const handleClick=(value:string)=>{
+  const newUrl=formURLQuery({
+    params:searchParams.toString(),
+    key:"filter",
+    value
+  })
+  router.push(newUrl,{scroll:false})
+}
 
   return (
-    <div className={`relative ${containerClasses}`}>
-      <Select>
-        <SelectTrigger
+    <div className={`relative ${containerClasses}`} >
+      <Select onValueChange={handleClick} defaultValue={paramFilter || undefined}>
+        <SelectTrigger 
           className={`${otherClasses} body-regular light-border background-light800_dark300 text-dark500_light700 px-5 py-2.5`}
         >
           <div className="line-clamp-1">
