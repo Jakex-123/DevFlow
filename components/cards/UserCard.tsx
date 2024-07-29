@@ -18,7 +18,7 @@ const UserCard = async ({user}:Props) => {
     const topTags=await getTopTags({userId:user._id})
     return (
     <Link href={`/profile/${user.clerkId}`} className='background-light900_dark200 flex h-72 w-[15.625rem] flex-col items-center justify-evenly rounded-2xl shadow-light-100 max-xs:min-w-full sm:w-[250px]'>
-        <article className='flex flex-col items-center gap-2'>
+        <article className='flex flex-col items-center gap-2 px-5'>
             <Image alt="" src={user.picture} className='background-light900_dark200 aspect-square rounded-full object-cover' width={100} height={100} />
             <h3 className='h3-bold text-dark200_light900 line-clamp-1'>{user.name}</h3>
             <p className='body-regular text-dark500_light500 mt-2'>@{user.username}</p>
