@@ -13,15 +13,15 @@ import AllAnswers from "@/components/shared/AllAnswers";
 import Votes from "@/components/shared/Votes";
 import { URLProps } from "@/types";
 
-const Page = async ({ params }: URLProps) => {
+const Page = async ({ params,searchParams }: URLProps) => {
   const { id } = params;
-  const result = await getQuestionById({ questionId: id });
+  const result = await getQuestionById({ questionId: id, });
   const { userId: clerkId } = auth();
   let mongoUser;
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });  
   }
-  console.log(result)
+
   const { author, tags } = result;
   return (
     <div>
@@ -91,11 +91,17 @@ const Page = async ({ params }: URLProps) => {
           );
         })}
       </div>
+      
       <AllAnswers
         questionId={result?._id.toString()}
         userId={mongoUser?._id}
         totalAnswers={result?.answers?.length}
+        filter={searchParams?.filter}
+        page={searchParams?.page}
       />
+
+      
+
       <Answer
         authorId={JSON.stringify(mongoUser)}
         questionId={JSON.stringify(result?._id)}

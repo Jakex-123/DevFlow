@@ -1,16 +1,43 @@
 "use client"
 import { HomePageFilters } from '@/constants/filters'
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from '../ui/button'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { formURLQuery } from '@/lib/utils'
 
 const HomeFilters = () => {
-    const isActive='newest';
+    const searchParams=useSearchParams()
+    const router=useRouter()
+    const [isActive,setIsActive]=useState('')
+
+    const handleClick=(item:string)=>{
+        if(isActive===item){
+            setIsActive('')
+            const newUrl=formURLQuery({
+                params:searchParams.toString(),
+                key:'filter',
+                value:null
+            })
+            router.push(newUrl,{scroll:false})
+        }
+        else{
+            setIsActive(item)
+            const newUrl=formURLQuery({
+                params:searchParams.toString(),
+                key:'filter',
+                value:item.toLowerCase()
+            })
+            router.push(newUrl,{scroll:false})
+        }
+
+    }
+
   return (
     <div className='mt-10 hidden flex-wrap gap-3 md:flex'>
 
         {HomePageFilters.map((filter)=>{
             return(
-                <Button key={filter.value} className={`body-medium rounded-lg px-6 py-3 capitalize shadow-none ${isActive===filter.value?'bg-primary-100 text-primary-500':'background-light800_dark300 text-light-500'}`} onClick={()=>{}}>
+                <Button onClick={()=>{}} onClickCapture={()=>handleClick(filter.value)} key={filter.value} className={`body-medium rounded-lg px-6 py-3 capitalize shadow-none ${isActive===filter.value?'bg-primary-100 text-primary-500':'background-light800_dark300 text-light-500'}`}>
                     {filter.name}
                 </Button>
             )

@@ -1,7 +1,7 @@
 import QuestionCard from "@/components/cards/QuestionCard";
-import HomeFilters from "@/components/home/HomeFilters";
 import Filter from "@/components/shared/Filter";
 import NoResult from "@/components/shared/NoResult";
+import Pagination from "@/components/shared/Pagination";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import {  QuestionFilters } from "@/constants/filters";
 import { getSavedQuestions } from "@/lib/actions/user.action";
@@ -13,7 +13,9 @@ export default async function Home({searchParams}:SearchParamsProps) {
     if(!userId) return null
     const results= await getSavedQuestions({
         clerkId:userId,
-        searchQuery:searchParams.q
+        searchQuery:searchParams.q,
+        filter:searchParams.filter,
+        page:searchParams?.page ? +searchParams.page:1
     })
     return(
         <>
@@ -22,11 +24,8 @@ export default async function Home({searchParams}:SearchParamsProps) {
                 <LocalSearch route='/collection' iconPosition="left" imgSrc='/assets/icons/search.svg' placeholder="Search for Questions" otherClasses="flex-1" />
                 <Filter filters={QuestionFilters}
                 otherClasses="min-h-[56px] sm:min-w-[170px]"
-                containerClasses="hidden max-md:flex"
                 />
             </div>
-
-            <HomeFilters/>
             <div className="mt-10 flex w-full flex-col gap-6">
             {results?.questions.length>0 ? results?.questions.map((question:any)=>{
                 return (<QuestionCard key={question._id} _id={question._id} title={question.title} tags={question.tags}  author={question.author} upvotes={question.upvotes} views={question.views} answers={question.answers} createdAt={question.createdAt}/>)
@@ -35,6 +34,9 @@ export default async function Home({searchParams}:SearchParamsProps) {
                 link='ask-question'
                 btnTxt='Ask a Question'
             />}
+            </div>
+            <div className="mt-10">
+                <Pagination pageNumber={searchParams?.page?+searchParams.page:1} isNext={results.isNext}/>
             </div>
         </>
     )
