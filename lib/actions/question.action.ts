@@ -108,6 +108,13 @@ export async function createQuestion(params: CreateQuestionParams) {
     await Question.findByIdAndUpdate(question._id, {
       $push: { tags: { $each: tagDocuments } },
     });
+    Interaction.create({
+      user:author,
+      action:"ask_question",
+      question:question._id,
+      tags:tagDocuments
+    })
+    await User.findByIdAndUpdate(author,{$inc:{reputation:5}})
     revalidatePath(path);
   } catch (err) {
     console.log(err);
@@ -138,6 +145,9 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
     // increment reputation
+    await User.findByIdAndUpdate(userId,{$inc:{reputation:hasupVoted?-1:1}})
+    await User.findByIdAndUpdate(question.author,{$inc:{reputation:hasupVoted?-10:10}})
+
     revalidatePath(path);
   } catch (error) {
     console.log(error);
@@ -168,6 +178,9 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
     // increment reputation
+    await User.findByIdAndUpdate(userId,{$inc:{reputation:hasdownVoted?-2:2}})
+    await User.findByIdAndUpdate(question.author,{$inc:{reputation:hasdownVoted?-10:10}})
+
     revalidatePath(path);
   } catch (error) {
     console.log(error);
@@ -182,6 +195,7 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
     await Question.findByIdAndDelete(questionId);
     await Answer.deleteMany({ question: questionId });
     await Interaction.deleteMany({ question: questionId });
+    await User.deleteOne({saved:questionId})
     await Tag.updateMany(
       { questions: questionId },
       { $pull: { questions: questionId } }
