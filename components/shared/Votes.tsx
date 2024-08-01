@@ -44,7 +44,6 @@ const Votes = ({
 
   const handleVote = async (action: string) => {
     if(!userId){
-      console.log("clicked")
       return toast({
         title:"Please login",
         description:"You must be logged in to perform this action"
@@ -58,6 +57,10 @@ const Votes = ({
         hasupVoted,
         path: pathname,
       });
+      return toast({
+        title: `Upvote ${!hasupVoted ? 'Successful' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive'
+      })
     } else if (action === "downvote" && type === "question") {
       await downvoteQuestion({
         questionId: itemId,
@@ -66,6 +69,10 @@ const Votes = ({
         hasupVoted,
         path: pathname,
       });
+      return toast({
+        title: `Downvote ${!hasdownVoted ? 'Successful' : 'Removed'}`,
+        variant: !hasdownVoted ? 'default' : 'destructive'
+      })
     } else if (action === "upvote" && type === "answer") {
       await upvoteAnswer({
         answerId: itemId,
@@ -74,6 +81,11 @@ const Votes = ({
         hasupVoted,
         path: pathname,
       });
+      return toast({
+        title: `Upvote ${!hasupVoted ? 'Successful' : 'Removed'}`,
+        variant: !hasdownVoted ? 'default' : 'destructive'
+      })
+      
     } else if (action === "downvote" && type === "answer") {
       await downvoteAnswer({
         answerId: itemId,
@@ -82,14 +94,28 @@ const Votes = ({
         hasupVoted,
         path: pathname,
       });
+      return toast({
+        title: `Downvote ${!hasdownVoted ? 'Successful' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive'
+      })
     }
+    
   };
 
-  const handleSave =async () => await saveQuestion({
+  const handleSave =async () => {
+    if(!userId){
+      return toast({
+        title:"Please login",
+        description:"You must be logged in to perform this action"
+      })
+    }
+    await saveQuestion({
     questionId:itemId.toString(),
     userId,
     path:pathname
-  });
+  })
+  toast({description:"Question Saved"})
+};
   return (
     <div className="flex gap-5">
       <div className="flex items-center gap-2">

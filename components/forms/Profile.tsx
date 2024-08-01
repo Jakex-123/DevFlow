@@ -16,6 +16,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { updateUserInfo } from "@/lib/actions/user.action";
 import { usePathname,useRouter } from "next/navigation";
+import { useToast } from "../ui/use-toast";
 
 interface Props {
   clerkId: string;
@@ -36,7 +37,7 @@ const Profile = ({ clerkId, user }: Props) => {
       username: parsedUserData.username || "",
     },
   });
-
+  const {toast}=useToast()
   const onSubmit = async (values: z.infer<typeof ProfileSchema>) => {
     try{
         setIsSubmitting(true)
@@ -58,6 +59,7 @@ const Profile = ({ clerkId, user }: Props) => {
         }
         finally{
             setIsSubmitting(false)
+            toast({description:"User Information Updated"})
         }
     }
     catch(error){

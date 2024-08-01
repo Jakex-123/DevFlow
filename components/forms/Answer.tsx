@@ -18,6 +18,7 @@ import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { usePathname } from "next/navigation";
 import { marked } from "marked";
+import { useToast } from "../ui/use-toast";
 
 type AnswerFormInputs = z.infer<typeof AnswerSchema>;
 
@@ -39,6 +40,7 @@ const Answer = (params: Props) => {
       answer: "",
     },
   });
+  const {toast}=useToast()
 
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
@@ -58,13 +60,19 @@ const Answer = (params: Props) => {
       console.log(error);
     } finally {
       setIsSubmitting(false);
+      toast({description:"Answer Created"})
     }
   };
 
   const [isSubmittingAI,setIsSubmittingAI]=useState(false)
 
   const generateAIAnswer=async()=>{
-    if(!authorId) return;
+    if(!authorId){
+        return toast({
+          title:"Please login",
+          description:"You must be logged in to perform this action"
+        })
+    }
     setIsSubmittingAI(true)
     try {
       const res=await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,{

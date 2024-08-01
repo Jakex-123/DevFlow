@@ -22,6 +22,7 @@ import Image from "next/image";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeProvider";
+import { useToast } from "../ui/use-toast";
 
 interface Props {
   mongoUserId: string;
@@ -37,7 +38,7 @@ const Question = ({ mongoUserId, type, questionDetails }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const pathName = usePathname();
-
+  const {toast}=useToast()
   const parsedQuestionData = questionDetails  && JSON.parse(questionDetails || "");
   const groupedTags = parsedQuestionData?.tags.map((tag: any) => tag.name);
 
@@ -78,6 +79,8 @@ const Question = ({ mongoUserId, type, questionDetails }: Props) => {
     } catch (error) {
     } finally {
       setIsSubmitting(false);
+     if(type!=="edit") toast({description:"Question Created"})
+      else toast({description:"Question Updated"})
     }
   }
 
@@ -252,6 +255,7 @@ const Question = ({ mongoUserId, type, questionDetails }: Props) => {
           )}
         />
 
+        <div className="flex w-full justify-end">
         <Button
           type="submit"
           className="primary-gradient w-fit !text-light-900"
@@ -263,6 +267,7 @@ const Question = ({ mongoUserId, type, questionDetails }: Props) => {
             <>{type === "edit" ? "Edit Question" : "Ask Question"}</>
           )}
         </Button>
+        </div>
       </form>
     </Form>
   );
