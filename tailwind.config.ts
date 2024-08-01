@@ -1,23 +1,25 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode:["class"],
+  darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
+    "./app/**/.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
   theme: {
-    container:{
-      center:true,
-      padding:'2rem',
-      screens:{
-        '2xl':'1400px',
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
       },
     },
     extend: {
       colors: {
+        muted: "#f0f0f0",
         primary: {
           500: "#FF7000",
           100: "#FFF1E6",
@@ -58,12 +60,12 @@ const config: Config = {
       screens: { xs: "420px" },
       keyframes: {
         "accordion-down": {
-          from: {height: '0'},
+          from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: '0' },
+          to: { height: "0" },
         },
       },
       animation: {

@@ -94,14 +94,18 @@ export async function createQuestion(params: CreateQuestionParams) {
       author,
       content,
     });
-
+    let newTags=0;
     const tagDocuments = [];
     for (const tag of tags) {
-      const existingTag = await Tag.findOneAndUpdate(
-        { name: { $regex: new RegExp(`^${tag}$`, "i") } }, // find i=case-insensitive
-        { $setOnInsert: { name: tag }, $push: { questions: question._id } }, // do something on it
-        { upsert: true, new: true } // attributes
+      let existingTag = await Tag.findOne({ name: { $regex: new RegExp(`^${tag}$`, "i") } });
+      if(existingTag===null) newTags += 10;
+
+      existingTag=await Tag.findOneAndUpdate(
+        { name: { $regex: new RegExp(`^${tag}$`, "i") } },
+        { $setOnInsert: { name: tag }, $addToSet: { questions: question._id } },
+        { upsert: true, new: true }
       );
+
       tagDocuments.push(existingTag._id);
     }
 
@@ -114,7 +118,7 @@ export async function createQuestion(params: CreateQuestionParams) {
       question:question._id,
       tags:tagDocuments
     })
-    await User.findByIdAndUpdate(author,{$inc:{reputation:5}})
+    await User.findByIdAndUpdate(author,{$inc:{reputation:(5+newTags)}})
     revalidatePath(path);
   } catch (err) {
     console.log(err);
@@ -145,8 +149,14 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
     // increment reputation
-    await User.findByIdAndUpdate(userId,{$inc:{reputation:hasupVoted?-1:1}})
-    await User.findByIdAndUpdate(question.author,{$inc:{reputation:hasupVoted?-10:10}})
+    if (question.author.toString() !== userId) {
+      await User.findByIdAndUpdate(userId, {
+        $inc: { reputation: hasupVoted ? -2 : 2 },
+      });
+      await User.findByIdAndUpdate(question.author, {
+        $inc: { reputation: hasupVoted ? -10 : 10 },
+      });
+    }
 
     revalidatePath(path);
   } catch (error) {
@@ -178,9 +188,10 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
     // increment reputation
+    if (question.author.toString() !== userId) {
     await User.findByIdAndUpdate(userId,{$inc:{reputation:hasdownVoted?-2:2}})
     await User.findByIdAndUpdate(question.author,{$inc:{reputation:hasdownVoted?-10:10}})
-
+    }
     revalidatePath(path);
   } catch (error) {
     console.log(error);

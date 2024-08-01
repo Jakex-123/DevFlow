@@ -102,6 +102,12 @@ body {
 }
 
 /* Markdown Start */
+.markdown {
+  white-space: pre-wrap;
+  word-wrap: break-word;       
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
 .markdown a {
   color: #1da1f2;
 }

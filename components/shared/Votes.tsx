@@ -10,6 +10,7 @@ import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname,useRouter } from "next/navigation";
 import React, { useEffect } from "react";
+import { useToast } from "../ui/use-toast";
 
 interface Props {
   upvotes: number;
@@ -35,12 +36,20 @@ const Votes = ({
 
   const router=useRouter()
   const pathname = usePathname();
+  const { toast } = useToast()
 
   useEffect(()=>{
     viewQuestion({questionId:itemId?.toString(),userId:userId?userId?.toString():undefined})
   },[itemId,pathname,userId,router])
 
   const handleVote = async (action: string) => {
+    if(!userId){
+      console.log("clicked")
+      return toast({
+        title:"Please login",
+        description:"You must be logged in to perform this action"
+      })
+    }
     if (action === "upvote" && type === "question") {
       await upvoteQuestion({
         questionId: itemId,
