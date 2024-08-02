@@ -10,15 +10,24 @@ import Question from "@/database/question.model";
 import { revalidatePath } from "next/cache";
 import { connectDB } from "../mongoose";
 import Interaction from "@/database/interaction.model";
+import User from "@/database/user.model";
 
 export const createAnswer = async (params: CreateAnswerParams) => {
   try {
     connectDB();
     const { question, author, content, path } = params;
     const answer = await Answer.create({ question, author, content });
-    await Question.findByIdAndUpdate(question, {
+    const questionObj=await Question.findByIdAndUpdate(question, {
       $push: { answers: answer._id },
     });
+    Interaction.create({
+      user:author,
+      action:"answer",
+      question,
+      answer:answer._id,
+      tags:questionObj.tags
+    })
+    await User.findByIdAndUpdate(author,{$inc:{reputation:10}})
     revalidatePath(path);
   } catch (error) {
     console.log(error);
@@ -81,14 +90,18 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
     } else {
       updateQuery = { $addToSet: { upvotes: userId } };
     }
-    const question = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
       new: true,
     });
 
-    if (!question) {
-      throw new Error("Question not found");
+    if (!answer) {
+      throw new Error("Answer not found");
     }
     // increment reputation
+    if(answer.author.toString() !== userId){
+      await User.findByIdAndUpdate(userId,{$inc:{reputation:hasupVoted?-2:2}})
+      await User.findByIdAndUpdate(answer.author,{$inc:{reputation:hasupVoted?-10:10}})
+    }
     revalidatePath(path);
   } catch (error) {
     console.log(error);
@@ -111,14 +124,18 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     } else {
       updateQuery = { $addToSet: { downvotes: userId } };
     }
-    const question = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
       new: true,
     });
 
-    if (!question) {
-      throw new Error("Question not found");
+    if (!answer) {
+      throw new Error("Answer not found");
     }
     // increment reputation
+    if(answer.author.toString() !== userId){
+      await User.findByIdAndUpdate(userId,{$inc:{reputation:hasdownVoted?-2:2}})
+      await User.findByIdAndUpdate(answer.author,{$inc:{reputation:hasdownVoted?-10:10}})
+    }
     revalidatePath(path);
   } catch (error) {
     console.log(error);

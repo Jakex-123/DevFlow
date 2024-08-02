@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { deleteQuestion } from '@/lib/actions/question.action'
 import { usePathname, useRouter } from 'next/navigation'
 import { deleteAnswer } from '@/lib/actions/answer.action'
+import { useToast } from '../ui/use-toast'
 
 interface Props{
     type:string,
@@ -18,12 +19,26 @@ const EditDeleteAction = ({type,id}:Props) => {
     const handleEdit=()=>{
         router.push(`/question/edit/${id.toString()}`)
     }
+    const {toast}=useToast()
     const handleDelete=async ()=>{
         if(type==="question"){
-            await deleteQuestion({questionId:id,path:pathname})
+            try{
+                await deleteQuestion({questionId:id,path:pathname})
+                toast({description:"Question Deleted",variant:"destructive"})
+            }
+            catch(error){
+                console.log(error)
+                throw error
+            }
         }
         else{
+            try{
             await deleteAnswer({answerId:id,path:pathname})
+            toast({description:"Answer Deleted",variant:"destructive"})
+            }
+            catch(error){
+                console.log(error)
+            }
         }
     }
   return (

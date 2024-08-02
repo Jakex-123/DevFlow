@@ -6,7 +6,11 @@ import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.action";
 import { SearchParamsProps } from "@/types";
 import React from "react";
+import type { Metadata } from "next";
 
+export const metadata:Metadata={
+    title:"Tags | DevOverflow",
+}
 const page = async ({ searchParams }: SearchParamsProps) => {
   const results = await getAllTags({
     searchQuery: searchParams.q,

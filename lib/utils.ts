@@ -1,11 +1,11 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import qs from "query-string"
- 
+import { BADGE_CRITERIA } from "@/constants";
+import { BadgeCounts } from "@/types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
 export const getTimeStamp = (createdAt: Date): string => {
   const now = new Date();
   const timeDifference = now.getTime() - createdAt.getTime();
@@ -95,3 +95,63 @@ export const removeKeysFromQuery = ({ params, keys }: URLRemoveQueryParams) => {
     }
   );
 };
+
+interface BadgeParam {
+  criteria: {
+    type: keyof typeof BADGE_CRITERIA;
+    count: number;
+  }[]
+}
+
+export const assignBadges = (params: BadgeParam) => {
+  const badgeCounts: BadgeCounts = {
+    GOLD: 0,
+    SILVER: 0,
+    BRONZE: 0,
+  }
+
+  const { criteria } = params;
+
+  criteria.forEach((item) => {
+    const { type, count } = item;
+    const badgeLevels: any = BADGE_CRITERIA[type];
+
+    Object.keys(badgeLevels).forEach((level: any) => {
+      if(count >= badgeLevels[level]) {
+        badgeCounts[level as keyof BadgeCounts] +=1 ;
+      }
+    })
+  })
+
+  return badgeCounts;
+}
+
+export function processJobTitle(title: string | undefined | null): string {
+  // Check if title is undefined or null
+  if (title === undefined || title === null) {
+    return "No Job Title";
+  }
+
+  // Split the title into words
+  const words = title.split(" ");
+
+  // Filter out undefined or null and other unwanted words
+  const validWords = words.filter((word) => {
+    return (
+      word !== undefined &&
+      word !== null &&
+      word.toLowerCase() !== "undefined" &&
+      word.toLowerCase() !== "null"
+    );
+  });
+
+  // If no valid words are left, return the general title
+  if (validWords.length === 0) {
+    return "No Job Title";
+  }
+
+  // Join the valid words to create the processed title
+  const processedTitle = validWords.join(" ");
+
+  return processedTitle;
+}

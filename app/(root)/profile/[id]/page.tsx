@@ -15,7 +15,6 @@ const Page = async ({ params,searchParams }: URLProps) => {
     const { id: clerkId } = params;
     const result = await getUserInfo({ userId: clerkId });
     const { userId } = auth();
-
     return (
         <>
             <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
@@ -58,7 +57,7 @@ const Page = async ({ params,searchParams }: URLProps) => {
                 </div>
             </div>
             <div className="mt-10">
-                <Stats totalQuestions={result?.totalQuestions} totalAnswers={result?.totalAnswers} badges={{GOLD: 1,SILVER: 1,BRONZE: 1}} reputation={1}/>
+                <Stats totalQuestions={result?.totalQuestions} totalAnswers={result?.totalAnswers} badges={{GOLD: result?.badgeCounts?.GOLD,SILVER: result?.badgeCounts?.SILVER,BRONZE: result?.badgeCounts?.BRONZE}} reputation={1}/>
             </div>
             <div className="mt-10 flex gap-10">
                 <Tabs defaultValue="top-posts" className="flex-1">
@@ -70,10 +69,10 @@ const Page = async ({ params,searchParams }: URLProps) => {
                             Answers
                         </TabsTrigger>
                     </TabsList>
-                    <TabsContent value="top-posts">
+                    <TabsContent value="top-posts" className="mt-5 flex w-full flex-col gap-6">
                     <QuestionsTab searchParams={searchParams} userId={result?.user._id} clerkId={clerkId} />
                     </TabsContent>
-                    <TabsContent value="answers">
+                    <TabsContent value="answers" className="mt-5 flex w-full flex-col gap-6">
                         <AnswersTab searchParams={searchParams} userId={result?.user._id} clerkId={clerkId}/>
                     </TabsContent>
                 </Tabs>

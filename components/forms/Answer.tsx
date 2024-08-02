@@ -17,6 +17,8 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { usePathname } from "next/navigation";
+import { marked } from "marked";
+import { useToast } from "../ui/use-toast";
 
 type AnswerFormInputs = z.infer<typeof AnswerSchema>;
 
@@ -28,7 +30,7 @@ interface Props {
 
 const Answer = (params: Props) => {
   const pathName = usePathname();
-  const { questionId, authorId } = params;
+  const { question,questionId, authorId } = params;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { mode } = useTheme();
   const editorRef = useRef<any>(null);
@@ -38,6 +40,7 @@ const Answer = (params: Props) => {
       answer: "",
     },
   });
+  const {toast}=useToast()
 
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
@@ -57,8 +60,45 @@ const Answer = (params: Props) => {
       console.log(error);
     } finally {
       setIsSubmitting(false);
+      toast({description:"Answer Created"})
     }
   };
+
+  const [isSubmittingAI,setIsSubmittingAI]=useState(false)
+
+  const generateAIAnswer=async()=>{
+    if(!authorId){
+        return toast({
+          title:"Please login",
+          description:"You must be logged in to perform this action"
+        })
+    }
+    setIsSubmittingAI(true)
+    try {
+      const res=await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,{
+        method:'POST',
+        body:JSON.stringify({question})
+      })
+      const aiResponse=await res.json()
+      const htmlContent = marked(aiResponse.reply,{
+        "async": false,
+        "breaks": false,
+        "extensions": null,
+        "gfm": true,
+        "hooks": null,
+        "pedantic": false,
+        "silent": false,
+        "tokenizer": null,
+        "walkTokens": null
+       });
+      editorRef.current.setContent(htmlContent)
+    } catch (error) {
+      console.log(error)
+    }
+    finally{
+      setIsSubmittingAI(false)
+    }
+  }
 
   return (
     <div className="mt-8">
@@ -67,9 +107,12 @@ const Answer = (params: Props) => {
           Write your answer here
         </h4>
         <Button
-          onClick={() => {}}
+          onClick={() => generateAIAnswer()}
           className="btn light-border-2 gap-2 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
         >
+         {isSubmittingAI?(<>
+         Generating...
+         </>):( <>
           <Image
             src={"/assets/icons/stars.svg"}
             width={15}
@@ -78,6 +121,8 @@ const Answer = (params: Props) => {
             className="object-contain"
           />
           Generate AI answer
+         </>
+          )}
         </Button>
       </div>
       <Form {...form}>
