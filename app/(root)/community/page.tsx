@@ -6,7 +6,11 @@ import { getAllUsers } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import dynamic from "next/dynamic";
 import React from "react";
+import type { Metadata } from "next";
 
+export const metadata:Metadata={
+    title:"Community | DevOverflow",
+}
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const res = await getAllUsers({
     searchQuery: searchParams.q,
@@ -18,7 +22,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
-      <div className="mt-11 flex flex-wrap justify-between gap-5">
+      <div className="mt-11 flex flex-wrap justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           route="/community"
           iconPosition="left"

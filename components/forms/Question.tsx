@@ -247,8 +247,7 @@ const Question = ({ mongoUserId, type, questionDetails }: Props) => {
                 </>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Add up to 5 tags to describe what your question is about. Start
-                typing to see suggestions.
+                Add up to 5 tags to describe what your question is about.
               </FormDescription>
               <FormMessage className="text-red-600" />
             </FormItem>

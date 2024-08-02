@@ -48,11 +48,13 @@ const QuestionCard = ({clerkId,_id,title,tags,author,upvotes,views,answers,creat
                    return <RenderTag key={tag?._id} _id={tag?._id} name={tag?.name}/>
                 })}
             </div>
-            <div className='mt-6 flex w-full flex-wrap justify-between'>
+            <div className='flex-between mt-6 w-full flex-wrap gap-3'>
                 <Metric imgUrl={author.picture} title={` • asked ${getTimeStamp(createdAt)}`} alt='user' href={`/profile/${author.clerkId}`} value={author.name} isAuthor textStyles='small-medium text-dark400_light700'/>
+                <div className='flex items-center gap-3 max-sm:flex-wrap max-sm:justify-start'>
                 <Metric imgUrl='/assets/icons/like.svg' title='Votes' alt='upvote' value={formatNumber(upvotes.length)} textStyles='small-medium text-dark400_light800'/>
                 <Metric imgUrl='/assets/icons/message.svg' title='Answers' alt='answers' value={formatNumber(answers.length)} textStyles='small-medium text-dark400_light800'/>
                 <Metric imgUrl='/assets/icons/eye.svg' title='Views' alt='views' value={formatNumber(views)} textStyles='small-medium text-dark400_light800'/>
+                </div>
             </div>
 
     </div>
