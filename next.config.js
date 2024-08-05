@@ -1,21 +1,26 @@
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     mdxRs: true,
-    serverComponentsExternalPackages: ['mongoose']
+    serverComponentsExternalPackages: ['mongoose'],
   },
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*'
+        hostname: '*',
       },
       {
         protocol: 'http',
-        hostname: '*'
+        hostname: '*',
       },
-    ]
-  }
-}
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = withPWA(nextConfig);
