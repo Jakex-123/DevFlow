@@ -19,7 +19,7 @@ const RightSidebar = async() => {
           {hotQuestions.map((ques)=>{
             return(<Link
             className='flex cursor-pointer items-center justify-between gap-7'
-             href={`/questions/${ques._id}`} key={ques._id}>
+             href={`/question/${ques._id}`} key={ques._id}>
               <p className='body-medium text-dark500_light700 '>{ques.title}</p>
               <Image
                className='invert-colors'
