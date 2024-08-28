@@ -38,7 +38,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       <section className="mt-11 flex flex-wrap gap-4">
         {res.users.length > 0
           ? res.users.map((user) => {
-              return <UserCard key={user} user={user} />;
+              return <UserCard key={user._id} user={user} />;
             })
           : "no users"}
       </section>

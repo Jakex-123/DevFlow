@@ -30,3 +30,34 @@ export async function viewQuestion(params: ViewQuestionParams) {
       throw error;
     }
   }
+
+  export async function viewTag(params: { tagId: any; userId: any }) {
+    try {
+      await connectDB();
+      const { tagId, userId } = params;
+  
+      if (userId) {
+        // Find existing interaction
+        const existingInteraction = await Interaction.findOne({
+          user: userId,
+          action: "view_tag",
+          tags: tagId,
+        });
+  
+        if (existingInteraction) {
+          console.log('User has already viewed this tag.');
+          return;
+        }
+  
+        // Create a new interaction record or update an existing one
+        await Interaction.updateOne(
+          { user: userId, action: "view_tag" },
+          { $addToSet: { tags: tagId } }, // Use $addToSet to avoid duplicates
+          { upsert: true } // Create a new document if none exists
+        );
+      }
+    } catch (error) {
+      console.error('Error in viewTag function:', error);
+      throw error;
+    }
+  }

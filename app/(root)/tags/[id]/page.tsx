@@ -3,12 +3,19 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
 import LocalSearch from "@/components/shared/search/LocalSearch";
+import { viewTag } from "@/lib/actions/interaction.action";
 import { getQuestionsByTagId } from "@/lib/actions/tag.action";
+import { getUserById } from "@/lib/actions/user.action";
 import { URLProps } from "@/types";
+import { auth } from "@clerk/nextjs";
 
 
 export default async function Page({params,searchParams}: URLProps) {
     const{id}=params
+    const {userId}=auth()
+    let user;
+    if(userId) user=await getUserById({userId})
+    await viewTag({tagId:id?.toString(),userId:user._id?user._id:undefined})
     const result= await getQuestionsByTagId({tagId:id,page:searchParams?.page ? +searchParams.page : 1})
     return(
         <>

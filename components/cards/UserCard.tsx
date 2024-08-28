@@ -41,9 +41,9 @@ const UserCard = async ({ user }: Props) => {
           topTags.map((tag) => {
             return (
               <RenderTag
-                key={tag}
-                _id={tag}
-                name={tag.length > 4 ? tag.slice(0, 4) + "..." : tag}
+                key={tag._id}
+                _id={tag._id}
+                name={tag.name.length > 4 ? tag.name.slice(0, 4) + "..." : tag.name}
               />
             );
           })
