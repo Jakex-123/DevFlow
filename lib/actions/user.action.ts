@@ -18,6 +18,8 @@ import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
 import { assignBadges } from "../utils";
 
+
+
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectDB();
