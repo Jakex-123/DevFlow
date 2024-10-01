@@ -1,6 +1,6 @@
-# Question & Answer Platform
+# DevOverflow
 
-This Next.js 14 project provides a robust question and answer platform.
+This Next.js 14 project provides a robust question and answer platform akin StackOverflow.
 
 ## Project Overview
 
