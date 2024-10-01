@@ -24,14 +24,14 @@ The project aims to create a space where users can ask and answer questions, col
    ```
 2. **Install dependencies:**
    ```bash
-   npm install
+   bun install
    ```
    
 ## Usage
 
 1. **Start the development server:**
    ```bash
-   npm run dev
+   bun run dev
    ```
 2. **Access the application:** 
    Open `http://localhost:3000` in your browser. 
